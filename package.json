@@ -1,0 +1,43 @@
+{
+  "name": "forritaverkfrodi-react-starter",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@types/react": "16.8.1",
+    "braces": "^2.3.2",
+    "enzyme": "^3.9.0",
+    "performance-now": "2.1.0",
+    "react": "^16.8.3",
+    "react-dom": "^16.8.3",
+    "react-scripts": "^2.1.5",
+    "typescript": "3.3.1"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test  --watch",
+    "coverage": "react-scripts test  coverage",
+    "eject": "react-scripts eject",
+    "docker": "yarn build && docker build . -t react-docker && docker run -p 8000:80 react-docker"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ],
+  "devDependencies": {
+    "@babel/plugin-proposal-optional-chaining": "^7.2.0",
+    "@babel/preset-react": "^7.0.0-beta.2",
+    "enzyme": "^3.9.0",
+    "enzyme-adapter-react-16": "^1.10.0",
+    "jest-dom": "^3.1.2",
+    "react-mock-hoc-utils": "^0.1.5",
+    "react-testing-library": "^6.0.0",
+    "serve": "^10.1.2",
+    "test-component-builder": "^0.2.3"
+  }
+}
