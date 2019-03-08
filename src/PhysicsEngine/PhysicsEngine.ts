@@ -3,7 +3,16 @@ import Vector from "../Vector/Vector";
 import Event from "../Events/Event";
 import Timer from "../Timer/Timer";
 import EventManager from "../EventManager/EventManager";
-import GameComponent from "../GameObject/GameComponent";
+
+// @ts-ignore
+Array.prototype.filterInPlace = function(predicate) {
+  for (let i = 0; i < this.length; ++i) {
+    if (predicate(this[i])) {
+      this[this.length - 1] = this[i];
+      this.pop();
+    }
+  }
+};
 
 class PhysicsEngine {
   private static _instance: PhysicsEngine;
@@ -44,7 +53,8 @@ class PhysicsEngine {
   };
 
   public remove(body: any) {
-    this.rigidBodies.filterInPlace(body !== body);
+    //@ts-ignore
+    this.rigidBodies = this.rigidBodies.filter(aBody => aBody !== body);
   }
 
   public processRigidBodies = (dt: number) => {
@@ -60,25 +70,24 @@ class PhysicsEngine {
       gameObject.acceleration.multiply(deltaTime / 1000)
     );
 
-    gameObject.parent.position = gameObject.parent.position.plus(
+    gameObject.position = gameObject.position.plus(
       gameObject.velocity.multiply(deltaTime / 1000)
     );
   }
 
   public processEvent(event: Event) {
     const { physics, end } = event;
+    if (!physics) return;
 
     if (!event.gameObject) {
       throw "PhysicsEngine: gameObject is undefined or null";
     }
-    if (!event.gameObject.gameComponent) {
-      throw 'PhysicsEngine: event fired without "gameComponent" is undefined or null';
-    }
-    if (!event.gameObject.gameComponent.rigidBody) {
+
+    if (!event.gameObject.rigidBody) {
       throw "PhysicsEngine: physics event fired withour rigidBody";
     }
 
-    const gameObject = event.gameObject.gameComponent.rigidBody;
+    const gameObject = event.gameObject.rigidBody;
 
     if (!physics || !physics.force) return;
     const { duration } = physics;

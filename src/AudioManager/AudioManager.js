@@ -1,18 +1,16 @@
-import React, { Component } from 'react';
-import resourceManager from '../Resource Manager/Resource Manager';
-import WithResources from '../Resource Manager/HOC/WithResources';
+import ResourceManager from "../Resource Manager/Resource Manager";
 
-class AudioManager extends React.Component{
-    constructor(props) {
-        super(props);
-        this.playSound = this.playSound.bind(this);
-        this.resourceManager = new resourceManager();
-      }
+class AudioManager {
+  constructor(props) {
+    // super(props);
+    this.playSound = this.playSound.bind(this);
+    this.resourceManager = new ResourceManager();
+  }
 
-      playSound(sound) {
-        var audio = new Audio(this.resourceManager.getAudioPath(sound));
-        audio.play();
-      }
-    }
+  playSound(sound) {
+    var audio = new Audio(this.resourceManager.getAudioPath(sound));
+    audio.play();
+  }
+}
 
 export default AudioManager;

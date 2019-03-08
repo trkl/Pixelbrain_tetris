@@ -1,25 +1,24 @@
 import React, { Component } from "react";
-import WithResources from "../Resource Manager/HOC/WithResources";
+import { WithResources } from "../Resource Manager/HOC/WithResources";
 import Timer from "./../Timer/Timer";
 class Background extends Component {
   constructor(props) {
     super(props);
+
     this.state = {
       speed: props.speed,
       counter: 0,
       imagesource: "",
       styleImg: {
         height: "100%",
-        width: '100%',
-        backgroundPosition: '300px',
+        width: "100%",
         backgroundImage:
           "url(" + props.resourceManager.getImage(props.imagesource),
         backgroundRepeat: "repeat-x",
         position: "absolute",
         zIndex: props.zindex,
         overflow: "hidden"
-      },
-      ResourceManager: props.ResourceManager
+      }
     };
   }
 
@@ -37,7 +36,7 @@ class Background extends Component {
       counter: this.state.counter + this.state.speed,
       styleImg: {
         ...this.state.styleImg,
-        backgroundPosition:this.state.counter
+        backgroundPosition: this.state.counter
         // backgroundPosition: this.state.counter
       }
     });

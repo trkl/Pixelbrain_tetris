@@ -7,13 +7,15 @@ export default class CollisionManger {
     return CollisionManger._instance;
   }
 
-  gameObjects = [undefined];
+  gameObjects = [];
 
   add = collisionZone => {
     let i = -1;
-    while (this.gameObjects[++i] !== undefined) {
-      this.gameObjects[i] = collisionZone;
-      return i;
+    for (let i = 0, length = this.gameObjects.length; i < length; ++i) {
+      if (this.gameObjects[i] === undefined) {
+        this.gameObjects[i] = collisionZone;
+        return i;
+      }
     }
     return this.gameObjects.push(collisionZone) - 1;
   };
@@ -21,10 +23,10 @@ export default class CollisionManger {
   remove = number => (this.gameObjects[number] = undefined);
 
   collisionDetected(obj1, obj2) {
-    const position1 = obj1.props.position.plus(obj1.props.offset);
-    const position2 = obj2.props.position.plus(obj2.props.offset);
-    const bottomRight1 = position1.plus(obj1.props.dimensions);
-    const bottomRight2 = position2.plus(obj2.props.dimensions);
+    const position1 = obj1.position.plus(obj1.offset);
+    const position2 = obj2.position.plus(obj2.offset);
+    const bottomRight1 = position1.plus(obj1.dimensions);
+    const bottomRight2 = position2.plus(obj2.dimensions);
     return (
       position1.x < bottomRight2.x &&
       bottomRight1.x > position2.x &&
@@ -35,7 +37,6 @@ export default class CollisionManger {
 
   handleCollisions = () => {
     const collisions = [];
-
     for (let i = 0, length = this.gameObjects.length; i < length; ++i) {
       const obj1 = this.gameObjects[i];
       if (!obj1) continue;
@@ -47,17 +48,31 @@ export default class CollisionManger {
 
           collisions.push([
             {
-              object: obj1.props.parent.props.parent,
+              object: obj1.props.parent,
               collisionZone: obj2
             },
             {
-              object: obj2.props.parent.props.parent,
+              object: obj2.props.parent,
               collisionZone: obj1
             }
           ]);
           obj1.collision.add(obj2);
         } else {
-          obj1.collision.delete(obj2);
+          if (obj1.collision.delete(obj2)) {
+            const gameObj1 = obj1.props.parent;
+            const gameObj2 = obj2.props.parent;
+
+            gameObj1.onCollisionEnd &&
+              gameObj1.onCollisionEnd({
+                object: gameObj2,
+                collisionZone: obj2
+              });
+            gameObj2.onCollisionEnd &&
+              gameObj2.onCollisionEnd({
+                object: gameObj1,
+                collisionZone: obj1
+              });
+          }
         }
       }
     }
@@ -70,13 +85,3 @@ export default class CollisionManger {
     }
   };
 }
-
-// eslint-disable-next-line no-extend-native
-Array.prototype.filterInPlace = function(predicate) {
-  for (let i = 0; i < this.length; ++i) {
-    if (predicate(this[i])) {
-      this[this.length - 1] = this[i];
-      this.pop();
-    }
-  }
-};

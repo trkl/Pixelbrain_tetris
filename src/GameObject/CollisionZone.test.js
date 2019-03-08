@@ -1,22 +1,49 @@
 import React from "react";
-import { render } from "react-testing-library";
+import { render, cleanup, waitForElement } from "react-testing-library";
+import { constructMockHoc } from "react-mock-hoc-utils";
 import CollisionZone from "./CollisionZone";
 import Vector from "../Vector/Vector";
-import GameComponent from "./GameComponent";
-import WorldContextProvider from "../World/Context/WorldContextProvider";
-import World from "../World/World";
+import RigidBody from "./RigidBody";
+import CollisionManager from "../CollisionManager/CollisionManager";
 
-test("collisionDetection", () => {
-  const parent = { registerComponent: jest.fn() };
-  const world = 5;
+// import Test from "./Testy";
+// import World from "../World/World";
 
-  const da = render(
-    <GameComponent parent={parent} world={world}>
-      <CollisionZone dimensions={new Vector([10, 10])} position={Vector.Zero} />
-      <CollisionZone
-        dimensions={new Vector([10, 10])}
-        position={new Vector([0, 5])}
-      />
-    </GameComponent>
-  );
+let collisionZone, world, GameComponent, collisionManagerAddSpy, parent;
+describe("", () => {
+  beforeEach(() => {
+    world = {
+      registerComponent: jest
+        .fn()
+        .mockImplementation(component => (parent = component))
+    };
+
+    GameComponent = constructMockHoc("GameComponent.js")
+      .mock("../World/HOC/WithWorld.js")
+      .with({ world })
+      .create();
+    collisionManagerAddSpy = jest
+      .spyOn(CollisionManager.instance, "add")
+      .mockImplementation(component => (collisionZone = component));
+    render(
+      <GameComponent name="hey" world={world}>
+        <CollisionZone dimensions={Vector.Zero} />
+        <RigidBody weight={10} />
+      </GameComponent>
+    );
+  });
+
+  afterEach(cleanup);
+
+  it("it registers itself to CollisionManager", () => {
+    expect(collisionManagerAddSpy).toHaveBeenCalledWith(collisionZone);
+  });
+  it("returns position of parent", () => {
+    expect(collisionZone.position).toBe(parent.position);
+  });
+  it("CollisionZone.update() calls React.setState()", () => {
+    collisionZone.setState = jest.fn();
+    collisionZone.update();
+    expect(collisionZone.setState).toHaveBeenCalledTimes(1);
+  });
 });

@@ -1,5 +1,5 @@
 import React from "react";
-import WithResources from "../Resource Manager/HOC/WithResources";
+import { WithResources } from "../Resource Manager/HOC/WithResources";
 import Vector from "../Vector/Vector";
 import PropTypes from "prop-types";
 
@@ -10,7 +10,7 @@ class Sprite extends React.Component {
       this[i] = this.props[i];
     }
     this.size = this.size.multiply(this.scale);
-
+    this.parent.add(this);
     this.style = {
       width: this.size.x + "%",
       height: this.size.y + "%",
@@ -20,7 +20,7 @@ class Sprite extends React.Component {
   }
 
   render() {
-    const actualPosition = this.props.position.plus(this.offset);
+    const actualPosition = this.parent.position.plus(this.offset);
     return (
       // <div
       //   style={{
@@ -56,13 +56,15 @@ class Sprite extends React.Component {
 Sprite.propTypes = {
   size: PropTypes.instanceOf(Vector).isRequired,
   position: PropTypes.instanceOf(Vector).isRequired,
-  scale: PropTypes.number
+  scale: PropTypes.number,
+  offset: PropTypes.instanceOf(Vector).isRequired
 };
 
 Sprite.defaultProps = {
   size: Vector.Zero,
   scale: 1,
-  position: Vector.Zero
+  position: Vector.Zero,
+  offset: Vector.Zero
 };
 
 export default WithResources(Sprite);

@@ -9,7 +9,17 @@ import EventManager from "../EventManager/EventManager";
 import Camera from "./../Camera/Camera";
 import WorldContextProvider from "./Context/WorldContextProvider";
 
-import Game from "./../Resources/Games/FlappyBird/Game";
+import Game from "./../Resources/Games/Test/Game";
+
+// eslint-disable-next-line no-extend-native
+Array.prototype.filterInPlace = function(predicate) {
+  for (let i = 0; i < this.length; ++i) {
+    if (predicate(this[i])) {
+      this[this.length - 1] = this[i];
+      this.pop();
+    }
+  }
+};
 
 class World extends React.Component {
   constructor(props) {
@@ -20,17 +30,14 @@ class World extends React.Component {
   }
 
   registerComponent = component => {
-    if (this.camera === null && component.cameraFollows) {
-      this.camera = new Camera(component.rigidBody);
-      this.startCamera();
+    if (this.camera === null && component.props.cameraFollows) {
+      this.camera = new Camera(component);
     }
     this.components.push(component);
   };
 
   unregisterComponent = component => {
-    console.log(this.components.length);
     this.components.filterInPlace(aComponent => aComponent !== component);
-    console.log(this.components.length);
   };
 
   updateWorld = () => {
@@ -48,16 +55,9 @@ class World extends React.Component {
     </WorldContextProvider>
   );
 
-  startCamera = () => {
-    Timer.instance.subscribe(dt => this.camera.moveCamera(dt, this.components));
-  };
-
   beforeFrameRender = () => {
     this.components.forEach(component => {
-      let parent;
-
-      component.props.parent && (parent = component.props.parent);
-      parent.beforeFrameRender && parent.beforeFrameRender();
+      component.beforeFrameRender && component.beforeFrameRender();
     });
   };
 
@@ -65,6 +65,7 @@ class World extends React.Component {
     Timer.instance.subscribe(EventManager.instance.handleTick);
     Timer.instance.subscribe(PhysicsEngine.instance.processRigidBodies);
     Timer.instance.subscribe(CollisionManger.instance.handleCollisions);
+    Timer.instance.subscribe(dt => this.camera.moveCamera(dt, this.components));
     Timer.instance.subscribe(this.beforeFrameRender);
     Timer.instance.subscribe(this.updateWorld);
   }
