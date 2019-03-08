@@ -1,9 +1,9 @@
-import Game from "../Resources/Games/Test/Game";
+import Game from "../Resources/Games/Tetris/Game";
 
 export default class Timer {
   static _instance = undefined;
   static get instance() {
-    if (Timer._instance === undefined) Timer._instance = new Timer(0.1);
+    if (Timer._instance === undefined) Timer._instance = new Timer(30);
     return Timer._instance;
   }
 

@@ -40,7 +40,7 @@ class Sprite extends React.Component {
           maxWidth: this.size.x + "%",
           ...this.props.imageStyle
         }}
-        alt="pipeDown"
+        alt="imagea"
         src={this.resourceManager.getImage(this.imagesource)}
       />
       // {/* <style>{`@keyframes play {100% { background-position: ${-this.size.x *
