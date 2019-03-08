@@ -14,7 +14,7 @@ class Background extends Component {
         width: "100%",
         backgroundImage:
           "url(" + props.resourceManager.getImage(props.imagesource),
-        backgroundRepeat: "repeat-x",
+        backgroundRepeat: props.repeat,
         position: "absolute",
         zIndex: props.zindex,
         overflow: "hidden"
