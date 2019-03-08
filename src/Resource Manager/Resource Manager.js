@@ -50,12 +50,12 @@ class ResourceManager {
     this.GameInstance = GameName;
 
     const images = this.importAll(
-      require.context("./../Resources/Images", false, /\.(png|jpe?g|svg)$/)
+      require.context("./../Resources/Images", false, /\.(png|jpe?g|svg|gif)$/)
     );
     this.images = images;
 
     const audio = this.importAll(
-      require.context("./../Resources/sounds", false, /\.(wav)$/)
+      require.context("./../Resources/sounds", false, /\.(wav|mp3)$/)
     );
     this.audio = audio;
 

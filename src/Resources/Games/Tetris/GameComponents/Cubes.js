@@ -9,6 +9,7 @@ import CollisionManger from "../../../../CollisionManager/CollisionManager";
 import WithKeyboardSubscribe from "../../../../InputManager/HOC/WithKeyboardSubscribe";
 import { isRegExp } from "util";
 import KeyboardObservable from "../../../../InputManager/KeyboardObservable";
+import { FloorCollision } from "./Floor";
 
 function randomIntFromInterval(min, max) {
   // min and max included
@@ -104,6 +105,7 @@ class Cubes extends GameComponent {
     this.props.parent.addCubes();
     console.log(collider.object.name);
     this.props.keyboard.unsubscribe(this);
+    FloorCollision.bind(this, collider)();
   };
 
   componentDidMount() {
