@@ -105,7 +105,7 @@ class Cubes extends GameComponent {
     this.props.parent.addCubes();
     console.log(collider.object.name);
     this.props.keyboard.unsubscribe(this);
-    FloorCollision.bind(this, collider)();
+    // FloorCollision.bind(this, collider)();
   };
 
   componentDidMount() {
