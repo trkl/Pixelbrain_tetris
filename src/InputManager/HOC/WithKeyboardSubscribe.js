@@ -4,7 +4,7 @@ import KeyboardObservableContextConsumer from "../Context/KeyboardObservableCont
 const WithKeyboardSubscribe = WrappedComponent => props => (
   <KeyboardObservableContextConsumer>
     {subscribe => (
-      <WrappedComponent {...props} keyboardSubscribe={subscribe}>
+      <WrappedComponent {...props} keyboard={subscribe}>
         {props ? props.children : []}
       </WrappedComponent>
     )}

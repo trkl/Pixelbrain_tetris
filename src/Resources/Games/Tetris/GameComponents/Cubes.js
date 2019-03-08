@@ -5,6 +5,10 @@ import Vector from "../../../../Vector/Vector";
 import { WithWorld } from "../../../../World/HOC/WithWorld";
 import RigidBody from "../../../../GameObject/RigidBody";
 import VectorUtilities from "../../../../VectorUtilities/VectorUtilities";
+import CollisionManger from "../../../../CollisionManager/CollisionManager";
+import WithKeyboardSubscribe from "../../../../InputManager/HOC/WithKeyboardSubscribe";
+import { isRegExp } from "util";
+import KeyboardObservable from "../../../../InputManager/KeyboardObservable";
 
 function randomIntFromInterval(min, max) {
   // min and max included
@@ -15,43 +19,107 @@ class Cubes extends GameComponent {
   constructor(props) {
     super(props);
     this.children = [React.createElement(RigidBody, { weight: 10, drag: 0.5 })];
-
-    for (let i = 0; i < 4; ++i) {}
+    this.parent = this.props.parent;
+    this.props.parent.add(this);
   }
 
+  offsetArray = [];
+
+  rotate = () => {
+    const rest = [...this.offsetArray];
+    this.offsetArray = [];
+    for (const offset of rest) {
+      this.offsetArray.push(offset.hat());
+    }
+
+    for (let i = 1; i < this.components.length; ++i) {
+      this.components[i].offset = this.offsetArray[i - 1];
+    }
+    console.log(this.components);
+  };
+
   componentWillMount() {
+    this.props.keyboard.subscribe(this, "d", {
+      callback: () => (this.position = this.position.plus(new Vector([10, 0])))
+    });
+    this.props.keyboard.subscribe(this, "a", {
+      callback: () => (this.position = this.position.plus(new Vector([-10, 0])))
+    });
+    this.props.keyboard.subscribe(this, "w", {
+      callback: this.rotate
+    });
+
+    this.offsetArray.push(new Vector());
     this.children.push(
       React.createElement(Cube, {
-        offset: new Vector(),
-        name: "Cube"
+        offset: this.offsetArray[this.offsetArray.length - 1],
+        name: this.props.name
       })
     );
     for (let i = 0, length = 3; i < length; ++i) {
-      const randomCube = this.components[
-        randomIntFromInterval(1, this.components.length)
+      const randomOffset = this.offsetArray[
+        randomIntFromInterval(0, this.offsetArray.length - 1)
       ];
 
-      let offset;
+      while (true) {
+        let offset;
 
-      switch (randomIntFromInterval(0, 3)) {
-        case 0:
-          offset = new Vector([10, 0]);
+        switch (randomIntFromInterval(0, 3)) {
+          case 0:
+            offset = new Vector([10, 0]);
+            break;
+          case 1:
+            offset = new Vector([-10, 0]);
+            break;
+          case 2:
+            offset = new Vector([0, 10]);
+            break;
+          case 3:
+            offset = new Vector([0, -10]);
+            break;
+          default:
+            throw new Error("shit");
+        }
+
+        offset = randomOffset.plus(offset);
+        if (!this.collision(offset)) {
+          this.children.push(
+            React.createElement(Cube, {
+              offset: offset,
+              name: this.props.name
+            })
+          );
+          this.offsetArray.push(offset);
           break;
-        case 1:
-          offset = new Vector([-10, 0]);
-          break;
-        case 2:
-          offset = new Vector([0, 10]);
-          break;
-        case 3:
-          offset = new Vector([0, 10]);
-          break;
-        default:
-          throw "shit";
+        }
       }
     }
     super.componentWillMount();
   }
+
+  handled = false;
+  handleCollision = collider => {
+    if (this.handled || collider.object.name === this.name) return;
+    this.handled = true;
+    this.props.parent.addCubes();
+    console.log(collider.object.name);
+    this.props.keyboard.unsubscribe(this);
+  };
+
+  componentDidMount() {
+    super.componentDidMount();
+  }
+  collision(offset2) {
+    for (let i = 0; i < this.offsetArray.length; ++i) {
+      const offset1 = this.offsetArray[i];
+      const topLeft1 = this.position.plus(offset1);
+      const topLeft2 = this.position.plus(offset2);
+      console.log(topLeft1.vector);
+      console.log(topLeft2.vector);
+      if (topLeft1.y === topLeft2.y && topLeft2.x === topLeft1.x) return true;
+    }
+    return false;
+  }
 }
 
-export default WithWorld(Cubes);
+export default WithKeyboardSubscribe(WithWorld(Cubes));

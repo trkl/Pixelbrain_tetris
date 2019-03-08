@@ -28,6 +28,11 @@ export default class Vector {
       .map((val, idx) => val * vector[idx])
       .reduce((prev, curr) => prev + curr, 0);
 
+  hat = () => {
+    this.vector = [this.y, -this.x];
+    return this;
+  };
+
   multiply = scaler => new Vector(this.vector.map(val => val * scaler));
 
   divide = scaler => new Vector(this.vector.map(val => val / scaler));

@@ -3,6 +3,7 @@ import Cube from "./GameComponents/Cube";
 import Cubes from "./GameComponents/Cubes";
 import Floor from "./GameComponents/Floor";
 import Vector from "../../../Vector/Vector";
+import Tetris from "./GameComponents/Tetris";
 
 export default class Game extends Component {
   render = () =>
@@ -18,10 +19,20 @@ Game.instance = {
 };
 
 Game.gameComponents = [
-  <Cubes name="Cubes" />,
+  <Tetris name="Tetris" />,
   <Floor
     name="floor"
-    dimensions={new Vector([100, 30])}
-    position={new Vector([0, 70])}
+    dimensions={new Vector([100, 5])}
+    position={new Vector([0, 101])}
+  />,
+  <Floor
+    name="floor"
+    dimensions={new Vector([-5, 100])}
+    position={new Vector([-30, 0])}
+  />,
+  <Floor
+    name="floor"
+    dimensions={new Vector([5, 100])}
+    position={new Vector([101, 0])}
   />
 ];

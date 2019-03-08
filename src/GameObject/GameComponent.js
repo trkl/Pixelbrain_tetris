@@ -44,6 +44,7 @@ export default class GameComponent extends Component {
   update = () => {
     if (!this.mounted) return;
     this.setState({});
+    this.forceUpdate();
     this.components.forEach(component => component.update());
   };
 

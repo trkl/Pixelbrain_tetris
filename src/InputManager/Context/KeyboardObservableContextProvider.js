@@ -9,7 +9,12 @@ export default class KeyboardObservableProvider extends React.Component {
     this.observable = new KeyboardObservable();
   }
   render = () => (
-    <KeyboardObservableContext.Provider value={this.observable.subscribe}>
+    <KeyboardObservableContext.Provider
+      value={{
+        subscribe: this.observable.subscribe,
+        unsubscribe: this.observable.unsubscribe
+      }}
+    >
       {this.props.children}
     </KeyboardObservableContext.Provider>
   );

@@ -40,16 +40,29 @@ export default class KeyboardObservable {
   };
 
   unsubscribe = (object: any) => {
-    const { length } = this.subscribers;
-    if (length)
-      for (let i = 0; i < length; ++i) {
-        const subscriber = this.subscribers[i];
-        if (subscriber.event.gameObject === object) {
-          this.subscribers.splice(i, 1);
+    for (let i = 0; i < 3; ++i) {
+      let { length } = this.subscribers;
+      if (length)
+        for (let i = 0; i < this.subscribers.length; ++i) {
+          const subscriber = this.subscribers[i];
+          if (subscriber.event.gameObject === object) {
+            this.subscribers.splice(i, 1);
+          }
         }
+      else {
+        // throw "No subscribers";
       }
-    else {
-      throw "No subscribers";
+
+      if (this.whileDownSubscribers.length)
+        for (let i = 0; i < this.whileDownSubscribers.length; ++i) {
+          const subscriber = this.whileDownSubscribers[i];
+          if (subscriber.event.gameObject === object) {
+            this.subscribers.splice(i, 1);
+          }
+        }
+      else {
+        // throw "No subscribers";
+      }
     }
   };
 
