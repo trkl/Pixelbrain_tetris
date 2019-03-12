@@ -10,6 +10,7 @@ import WithKeyboardSubscribe from "../../../../InputManager/HOC/WithKeyboardSubs
 import { isRegExp } from "util";
 import KeyboardObservable from "../../../../InputManager/KeyboardObservable";
 import { FloorCollision } from "./Floor";
+import PhysicsEngine from "../../../../PhysicsEngine/PhysicsEngine";
 
 function randomIntFromInterval(min, max) {
   // min and max included
@@ -36,7 +37,6 @@ class Cubes extends GameComponent {
     for (let i = 1; i < this.components.length; ++i) {
       this.components[i].offset = this.offsetArray[i - 1];
     }
-    console.log(this.components);
   };
 
   componentWillMount() {
@@ -98,13 +98,25 @@ class Cubes extends GameComponent {
     super.componentWillMount();
   }
 
+  get headToBottom() {
+    let m = 0;
+    this.components.forEach(component => (m = Math.max(m, component.offset)));
+    return m;
+  }
+
   handled = false;
   handleCollision = collider => {
     if (this.handled || collider.object.name === this.name) return;
     this.handled = true;
     this.props.parent.addCubes();
-    console.log(collider.object.name);
     this.props.keyboard.unsubscribe(this);
+    PhysicsEngine.instance.remove(this.rigidBody);
+    PhysicsEngine.instance.remove(collider.object.rigidBody);
+    if (collider.object.name !== "floor")
+      collider.object.position.y = this.position.y + this.headToBottom;
+    collider.object.collisionZones.forEach(collisionZone =>
+      CollisionManger.instance.remove(collisionZone)
+    );
     // FloorCollision.bind(this, collider)();
   };
 
@@ -116,8 +128,6 @@ class Cubes extends GameComponent {
       const offset1 = this.offsetArray[i];
       const topLeft1 = this.position.plus(offset1);
       const topLeft2 = this.position.plus(offset2);
-      console.log(topLeft1.vector);
-      console.log(topLeft2.vector);
       if (topLeft1.y === topLeft2.y && topLeft2.x === topLeft1.x) return true;
     }
     return false;

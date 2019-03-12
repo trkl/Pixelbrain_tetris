@@ -15,7 +15,6 @@ class Tetris extends GameComponent {
 
   componentDidMount() {
     super.componentDidMount();
-    console.log(this.components);
     // this.downCube();
   }
 

@@ -10,9 +10,9 @@ class Cube extends GameComponent {
   constructor(props) {
     super(props);
     this.rigidBody = this.props.parent.rigidBody;
+
     this.props.parent.add(this);
     this.offset = this.props.offset ? this.props.offset : new Vector();
-    console.log(this.rigidBody);
     this.children = [
       <Sprite imagesource="merki.png" size={this.size} />,
       <CollisionZone offset={this.offset} dimensions={this.size} />

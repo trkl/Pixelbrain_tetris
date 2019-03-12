@@ -16,10 +16,9 @@ export function FloorCollision(collider) {
     collider.object,
     new Vector([0, -rigidBody.weight * 9.82 * rigidBody.gravity])
   );
-  rigidBody.force = new Vector();
+  rigidBody.force = Vector.Zero;
   rigidBody.gravity = 0;
-  // EventManager.instance.registerEvent(this.runnerCollisionEvent);
-  rigidBody.acceleration = new Vector([rigidBody.acceleration.x, 0]);
+  rigidBody.acceleration.y = 0;
 }
 
 class Floor extends GameComponent {
@@ -37,7 +36,9 @@ class Floor extends GameComponent {
 
   runnerCollisionEvent;
 
-  handleCollision = FloorCollision.bind(this);
+  handleCollision = collider => {
+    FloorCollision.bind(this)(collider);
+  };
 
   beforeFrameRender() {
     this.position = this.initialPosition;
